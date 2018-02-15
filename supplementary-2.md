@@ -113,18 +113,44 @@ prediction_xpr <- discall_erbb2$measure[optimal_index_disc]
 
  
 
-Having determined out predicted stratifying level of expression we now determine the optimal point-of-separation in the *validation* cohort.
+We can visualise this dataset-specific best, as well as the median, points-of-separation for comparison
+
+ 
+
+``` r
+p_disc <- plotALL(measure = exprs(disc)["ERBB2", ], 
+          srv = pData(disc),
+          time = "t.dss", 
+          event = "e.dss", 
+          bs_dfr = disc_bootstrap,
+          measure_name = "ERBB2") 
+          
+median_index_val <- which(discall_erbb2$measure >= 0)[1]
+annotation_dfr <- data.frame(index = c(median_index_val, optimal_index_disc),
+                             y = c(0.35, 2),
+                             annot = c("Median\n|", "Prediction\n|"))
+
+p_disc + 
+    geom_text(aes(x = index, y = y, label = annot), data = annotation_dfr)
+```
+
+<img src="supplementary-2_files/figure-markdown_github/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+
+ 
+
+Having determined out predicted stratifying level of expression we now determine the *validation* cohorts best point-of-separation...
 
  
 
 ``` r
 #calculate all survival statistics, this time for val
 valall_erbb2 <- survivALL(measure = exprs(val)["ERBB2", ], 
-          srv = pData(val),
-          time = "t.dss", 
-          event = "e.dss", 
-          bs_dfr = val_bootstrap,
-          measure_name = "ERBB2")
+                          srv = pData(val),
+                          time = "t.dss", 
+                          event = "e.dss", 
+                          bs_dfr = val_bootstrap,
+                          measure_name = "ERBB2"
+                          )
 valall_erbb2$dset <- "val"
 
 optimal_index_val <- which(diff(valall_erbb2$clsf) == 1) 
@@ -137,27 +163,30 @@ prediction_index <- which(valall_erbb2$measure >= prediction_xpr)[1]
 
  
 
-Having calculated the predicted and true *validation* optimal points-of-separation we compare how accurately the prediction reflects the optimal.
+and compare how accurately the *survivALL* prediction reflects the optimal, compared to using median expression as a predictor.
 
  
 
 ``` r
 p_val <- plotALL(measure = exprs(val)["ERBB2", ], 
-          srv = pData(val),
-          time = "t.dss", 
-          event = "e.dss", 
-          bs_dfr = val_bootstrap,
-          measure_name = "ERBB2") 
-          
-annotation_dfr <- data.frame(index = c(optimal_index_val, prediction_index),
-                             y = c(0.75, 1.5),
-                             annot = c("|\nOptimal", "Prediction\n|"))
+                 srv = pData(val),
+                 time = "t.dss", 
+                 event = "e.dss", 
+                 bs_dfr = val_bootstrap,
+                 measure_name = "ERBB2"
+                 ) 
+
+median_index_val <- which(valall_erbb2$measure >= 0)[1]
+
+annotation_dfr <- data.frame(index = c(median_index_val, optimal_index_val, prediction_index),
+                             y = c(0.35, 0.75, 1.5),
+                             annot = c("Median\n|", "|\nOptimal", "Prediction\n|"))
 
 p_val + 
     geom_text(aes(x = index, y = y, label = annot), data = annotation_dfr)
 ```
 
-<img src="supplementary-2_files/figure-markdown_github/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+<img src="supplementary-2_files/figure-markdown_github/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
  
 
@@ -166,10 +195,8 @@ Here the predicted point-of-separation closely replicates the true *validation* 
  
 
 ``` r
-median_index <- which(valall_erbb2$measure >= 0)[1]
-
 prediction_offset <- c(abs(optimal_index_val - prediction_index),
-                    abs(optimal_index_val - median_index))
+                    abs(optimal_index_val - median_index_val))
 
 comparison_dfr <- data.frame(gene = "ERBB2", 
                              prediction_offset = prediction_offset,
