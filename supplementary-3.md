@@ -18,8 +18,6 @@ To achieve this, we semi-randomly sampled from the combined discovery and valida
 
 The final step of this experiment will be to check that, for each differing ER+/ER- proportion, the derived level of *GATA3* expression that best stratifies the subsets remains consistent.
 
- 
-
 ### Libraries
 
 ``` r
@@ -128,7 +126,7 @@ plotSubsets <- function(sub_metabric, gene = "GATA3"){
 
  
 
-Using a subset size of `n = 500` and pre-defined proportions of ER positivity (25%, 50%, 75%) we then produce our METABRIC subsets and plot
+Using a subset size of `n = 500` and pre-defined proportions of ER positivity (25%, 50%, 75%) we then produce our METABRIC subsets and plot, reproducing Figure 2 from the manuscript.
 
  
 
