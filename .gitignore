@@ -7,3 +7,4 @@ discovery-eset.Rds
 validation-eset.Rds
 *.html
 *.Rmd
+*cache*
